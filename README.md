@@ -1,7 +1,7 @@
 oFactory
 ========
 
-A simple JavaScript library for creating factories.
+A simple, experimental JavaScript library for creating factories.
 
 Concepts and API heavily inspired by Eric Elliot's stampit library: https://github.com/dilvie/stampit
 
