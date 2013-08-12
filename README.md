@@ -6,11 +6,11 @@ A simple JavaScript library for creating factories.
 Concepts and API heavily inspired by Eric Elliot's stampit library: https://github.com/dilvie/stampit
 
 Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. This
-library is thoroughly *untested*. Use at your own risk!
+library is thoroughly **untested**. Use at your own risk!
 
 
-oFactory uses two basic concepts for object creation *mixin* properties and *shared* properties. *mixin* properties
-are added directly to a created object, while *shared* properties are added to the prototype of all objects created
+oFactory uses two basic concepts for object creation **mixin** properties and **shared** properties. **mixin** properties
+are added directly to a created object, while **shared** properties are added to the prototype of all objects created
 by a given factory.
 
 The oFactory library consists of one function that returns a factory: 
@@ -18,7 +18,7 @@ The oFactory library consists of one function that returns a factory:
   oFactory()
 ```
 
-If the the *oFactory()* function is passed an object as argument, that object will become the prototype for all objects
+If the the **oFactory()** function is passed an object as argument, that object will become the prototype for all objects
 created by the returned factory.
 ```JavaScript
  var proto = { hello: "hello" };
@@ -29,7 +29,7 @@ created by the returned factory.
  => true
 ```
 
-Factories created by oFactory have two methods defined on them. The *mixin()* method will define properties to be 
+Factories created by oFactory have two methods defined on them. The **mixin()** method will define properties to be 
 added directly to a created object (meaning they won't be shared between separate objects created by the factory):
 ```JavaScript
   var factory = oFactory().mixin({ hello: "hello" });
@@ -41,8 +41,8 @@ added directly to a created object (meaning they won't be shared between separat
   => "hello"
 ```  
 
-The *shared()* method will define properties to be added directly to prototype of created objects 
-(meaning they *will* be shared among all objects created by the factory). This is generally more useful
+The **shared()** method will define properties to be added directly to prototype of created objects 
+(meaning they **will** be shared among all objects created by the factory). This is generally more useful
 for defining methods:
 ```JavaScript
   var factory = oFactory().shared({
@@ -69,7 +69,7 @@ be useful if mixins are defined separately:
 ```  
 
 Both methods can also take as sole argument a function in which the appropriate object (either the created object
-or the prototype) will be bound to *this*. This can be useful for creating closures to hide private data:
+or the prototype) will be bound to **this**. This can be useful for creating closures to hide private data:
 ```JavaScript
   var factory = oFactory().mixin(function() {
     var x = "x";
@@ -105,7 +105,7 @@ Methods can be chained together as a shorthand to create more complex factories:
   => "b"
 ```
 
-Finally, factories can be composed using *oFactory.compose()* with any number of 
+Finally, factories can be composed using **oFactory.compose()** with any number of 
 factories as arguments:
 ```JavaScript
   var f1 = oFactory().mixin({a: "a"});
