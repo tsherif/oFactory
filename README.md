@@ -54,8 +54,9 @@ for defining methods:
   => 5
 ```  
 
-Both methods can take several objects as arguments and will apply them from left to right. This can 
-be useful if mixins are defined separately:
+Both methods can take several objects as arguments and will apply them in the order they are given
+(i.e. objects later in the argument list will be given priority). This can be useful if mixins or 
+shared properties are defined beforehand:
 ```JavaScript
   var hello_mixin = { hello: "hello" };
   var goodbye_mixin = { goodbye: "good bye" };
@@ -86,7 +87,7 @@ or the prototype) will be bound to **this**. This can be useful for creating clo
 
 Methods can be chained together as a shorthand to create more complex factories:
 ```JavaScript
-  var factory = oFactory().mixin({a: "a"}).shared({
+  var factory = oFactory().mixin({ a: "a" }).shared({
     getA: function() { return this.a; }
   }).mixin(function() {
     var b = "b";
@@ -108,8 +109,8 @@ Methods can be chained together as a shorthand to create more complex factories:
 Finally, factories can be composed using **oFactory.compose()** with any number of 
 factories as arguments:
 ```JavaScript
-  var f1 = oFactory().mixin({a: "a"});
-  var f2 = oFactory().shared({getA: function() { return this.a; }});
+  var f1 = oFactory().mixin({ a: "a" });
+  var f2 = oFactory().shared({ getA: function() { return this.a; } });
   
   var comp = oFactory.compose(f1, f2);
   var obj = comp();
@@ -122,8 +123,8 @@ factories as arguments:
 
 There is also an instance method version of composition:
 ```JavaScript
-  var f1 = oFactory().mixin({a: "a"});
-  var f2 = oFactory().shared({getA: function() { return this.a; }});
+  var f1 = oFactory().mixin({ a: "a" });
+  var f2 = oFactory().shared({ getA: function() { return this.a; } });
   
   var comp = f1.compose(f2);
 ```
