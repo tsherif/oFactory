@@ -9,7 +9,7 @@ Essentially this is just an attempt to implement similar functionality using a s
 library is thoroughly **untested**. Use at your own risk!
 
 
-oFactory uses two basic concepts for object creation **mixin** properties and **shared** properties. **mixin** properties
+oFactory uses two basic concepts for object creation: **mixin** properties and **shared** properties. **mixin** properties
 are added directly to a created object, while **shared** properties are added to the prototype of all objects created
 by a given factory.
 
