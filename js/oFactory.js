@@ -25,7 +25,7 @@ var oFactory = (function() {
 
   var objectExtend = function(obj, extension) {    
     Object.getOwnPropertyNames(extension).forEach(function(key) {
-      obj[key] = extension[key];
+      obj[key] = copyValue(extension[key]);
     });
   };
   
@@ -47,7 +47,27 @@ var oFactory = (function() {
         objectExtend(props, extension);
       }
     }
-  }
+  };
+  
+  var copyValue = function copyValue(val) {
+    var result;
+    
+    if (Array.isArray(val)) {
+      result = [];
+      val.forEach(function(elem) {
+        result.push(copyValue(elem));
+      });
+    } else if (typeof val === "object") {
+      result = {};
+      Object.keys(val).forEach(function(key) {
+        result[key] = copyValue(val[key]);
+      });
+    } else {
+      result = val;
+    }
+    
+    return result;
+  };
 
   var oFactory = function(proto) {    
     var factory = function(props) {
@@ -102,7 +122,7 @@ var oFactory = (function() {
     }
     
     return factory;
-  }
+  };
   
   oFactory.compose = function() {
     var comp = oFactory();
@@ -119,7 +139,7 @@ var oFactory = (function() {
     });
         
     return comp;
-  }
+  };
   
   return oFactory;
 })();
