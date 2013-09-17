@@ -30,23 +30,19 @@ var oFactory = (function() {
   };
   
   var moduleExtend = function(obj, extensions) {
-    for(i = 0, count = extensions.length; i < count; i++) {
-      extensions[i].call(obj);
-    }
+    extensions.forEach(function (extension) {
+      extension.call(obj);
+    });
   };
   
   var extend = function(props, mods, extensions) {
-    var i, count;
-    var extension;
-    
-    for(i = 0, count = extensions.length; i < count; i++) {
-      extension = extensions[i];
+    extensions.forEach(function (extension) {
       if (typeof extension === "function") {
         mods.push(extension);
       } else if (typeof extension === "object"){
         objectExtend(props, extension);
       }
-    }
+    });
   };
   
   var copyValue = function copyValue(val) {
