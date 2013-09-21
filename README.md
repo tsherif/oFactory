@@ -8,7 +8,6 @@ Concepts and API heavily inspired by Eric Elliot's stampit library: https://gith
 Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. This
 library is thoroughly **untested**. Use at your own risk!
 
-
 oFactory uses two basic concepts for object creation: **mixin** properties and **shared** properties. **mixin** properties
 are added directly to a created object, while **shared** properties are added to the prototype of all objects created
 by a given factory.
@@ -29,8 +28,12 @@ created by the returned factory.
  => true
 ```
 
-Factories created by oFactory have two methods defined on them. The **mixin()** method will define properties to be 
-added directly to a created object (meaning they won't be shared between separate objects created by the factory):
+Factories created by oFactory use three methods to define the objects they create. The **mixin()** and **shared()**
+methods define properties that created objects will have, while the **init()** method describes any further preparation 
+that is required after all properties of a created object are set. 
+
+The **mixin()** method defines properties to be added directly to a created object 
+(meaning they won't be shared between separate objects created by the factory):
 ```JavaScript
   var factory = oFactory().mixin({ hello: "hello" });
   var obj1 = factory();
@@ -41,7 +44,7 @@ added directly to a created object (meaning they won't be shared between separat
   => "hello"
 ```  
 
-The **shared()** method will define properties to be added directly to prototype of created objects 
+The **shared()** method defines properties to be added to the prototype of created objects 
 (meaning they **will** be shared among all objects created by the factory). This is generally more useful
 for defining methods:
 ```JavaScript
@@ -85,25 +88,74 @@ or the prototype) will be bound to **this**. This can be useful for creating clo
   => "x"
 ```
 
-Methods can be chained together as a shorthand to create more complex factories:
+Properties defined when a factory is created are essentially defaults that can
+be overridden in two ways when the factory is actually used. The first is to 
+simply pass an object with properties to be added or oroverridden in the new object: 
 ```JavaScript
-  var factory = oFactory().mixin({ a: "a" }).shared({
-    getA: function() { return this.a; }
-  }).mixin(function() {
-    var b = "b";
-    
-    this.getB = function() {
-      return b;
-    };
-  });
-  var obj = factory();
+  var factory = oFactory().mixin({ a: "a" });
+  var obj = factory({ a: "b"});
   
   obj.a;
-  => "a"
-  obj.getA();
-  => "a"
-  obj.getB();
   => "b"
+```
+
+The second is to pass a function that will have **this** bound to the created object:
+```JavaScript
+  var factory = oFactory().mixin({ a: "a" });
+  var obj = factory(function() {
+    this.a = "world";
+    this.b = "hello, " + this.a;
+  });
+  
+  obj.a;
+  => "world"
+  obj.b;
+  => "hello, world"
+```
+
+The **init()** can be used when further initialization is required after all of the created object's 
+properties have been set (including those set during the actual call to the factory function). Its sole 
+argument will be a function in which **this** is bound to the created object:
+```JavaScript
+  var factory = oFactory().init(function() {
+    this.sum = this.x + this.y;
+  });
+  var obj = factory({
+    x: 4,
+    y: 3
+  });
+  
+  obj.sum;
+  => 7
+```
+
+Factory definition methods can be chained together as a shorthand to create more complex factories:
+```JavaScript
+  var factory = oFactory({
+    getX: function() { return this.x; }
+  }).mixin(function() {
+    var y = 7;
+    
+    this.getY = function() {
+      return y;
+    };
+  }).init(function() {
+    this.sum = this.getX() + this.getY();
+  }).shared({
+    getSum: function() { return this.sum; }
+  });
+  var obj = factory({ x: 5 });
+  
+  obj.a;
+  => 5
+  obj.getX();
+  => 5
+  obj.getY();
+  => 7
+  obj.sum;
+  => 12
+  obj.getSum();
+  => 12
 ```
 
 Finally, factories can be composed using **oFactory.compose()** with any number of 

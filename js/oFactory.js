@@ -75,7 +75,13 @@ var oFactory = (function() {
      
       objectExtend(obj, specs.instance_properties);
       moduleExtend(obj, specs.instance_modules);
-      objectExtend(obj, props);    
+      if (typeof props === "function") {
+        props.call(obj);
+      } else {
+        objectExtend(obj, props);
+      }    
+      
+      moduleExtend(obj, specs.inits);
       
       return obj;
     };
@@ -83,11 +89,18 @@ var oFactory = (function() {
     factory.specs = {
       proto: proto || {},
       instance_modules: [],
-      instance_properties: {}
+      instance_properties: {},
+      inits: []
     };
     
     factory.mixin = function() {
       extend(this.specs.instance_properties, this.specs.instance_modules, Array.prototype.slice.call(arguments));
+      
+      return this;
+    };
+    
+    factory.init = function(f) {
+      this.specs.inits.push(f);
       
       return this;
     };
@@ -125,13 +138,15 @@ var oFactory = (function() {
     comp.specs = {
       proto: {},
       instance_modules: [],
-      instance_properties: {}
+      instance_properties: {},
+      inits: []
     }
     
     Array.prototype.slice.call(arguments).forEach(function(f) {
       objectExtend(comp.specs.proto, f.specs.proto);
       objectExtend(comp.specs.instance_properties, f.specs.instance_properties)
       Array.prototype.push.apply(comp.specs.instance_modules, f.specs.instance_modules);
+      Array.prototype.push.apply(comp.specs.inits, f.specs.inits);
     });
         
     return comp;
