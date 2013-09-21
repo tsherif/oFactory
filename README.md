@@ -39,7 +39,7 @@ The **mixin()** method defines properties to be added directly to a created obje
   var obj1 = factory();
   var obj2 = factory();
   
-  obj1.hello = "good bye"
+  obj1.hello = "good bye";
   obj2.hello  // No shared mixin state.
   => "hello"
 ```  
@@ -90,7 +90,7 @@ or the prototype) will be bound to **this**. This can be useful for creating clo
 
 Properties defined when a factory is created are essentially defaults that can
 be overridden in two ways when the factory is actually used. The first is to 
-simply pass an object with properties to be added or oroverridden in the new object: 
+simply pass an object with properties to be added or overridden in the new object: 
 ```JavaScript
   var factory = oFactory().mixin({ a: "a" });
   var obj = factory({ a: "b"});
@@ -113,7 +113,7 @@ The second is to pass a function that will have **this** bound to the created ob
   => "hello, world"
 ```
 
-The **init()** can be used when further initialization is required after all of the created object's 
+The **init()** method can be used when further initialization is required after all of the created object's 
 properties have been set (including those set during the actual call to the factory function). Its sole 
 argument will be a function in which **this** is bound to the created object:
 ```JavaScript
