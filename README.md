@@ -115,7 +115,7 @@ The second is to pass a function that will have **this** bound to the created ob
 
 The **init()** method can be used when further initialization is required after all of the created object's 
 properties have been set (including those set during the actual call to the factory function). Its sole 
-argument will be a function in which **this** is bound to the created object:
+argument is a function in which **this** is bound to the created object:
 ```JavaScript
   var factory = oFactory().init(function() {
     this.sum = this.x + this.y;
