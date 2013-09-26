@@ -28,12 +28,13 @@ created by the returned factory.
  => true
 ```
 
-Factories created by oFactory use three methods to define properties on the objects they create. The **mixin()** and **share()**
-methods define properties that created objects will have, while the **init()** method describes any further initialization
-that is required after all properties of a created object are set. Furthermore, a factory can be directed to create 
+Factories created by oFactory can use five methods to describe the objects they create. The **mixin()** and **share()**
+methods define properties that created objects will have. The **init()** method describes any further initialization
+that is required after all properties of a created object are set. The **seal()** and **freeze()** methods direct a 
+factory to create 
 [sealed](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/seal) or 
-[frozen](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
-objects by calling its **seal()** or **freeze()** methods, respectively.
+[frozen](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) 
+objects, respectively.
 
 The **mixin()** method defines properties to be added directly to a created object 
 (meaning they won't be shared between separate objects created by the factory):
