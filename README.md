@@ -3,7 +3,7 @@ oFactory
 
 A simple, experimental JavaScript library for creating factories.
 
-Concepts and API heavily inspired by Eric Elliot's stampit library: https://github.com/dilvie/stampit
+Concepts and API heavily inspired by Eric Elliot's [stampit](https://github.com/dilvie/stampit) library. 
 
 Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. This
 library is thoroughly **untested**. Use at your own risk!
@@ -28,9 +28,12 @@ created by the returned factory.
  => true
 ```
 
-Factories created by oFactory use three methods to define the objects they create. The **mixin()** and **shared()**
-methods define properties that created objects will have, while the **init()** method describes any further preparation 
-that is required after all properties of a created object are set. 
+Factories created by oFactory use three methods to define properties on the objects they create. The **mixin()** and **share()**
+methods define properties that created objects will have, while the **init()** method describes any further initialization
+that is required after all properties of a created object are set. Furthermore, a factory can be directed to create 
+[sealed](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/seal) or 
+[frozen](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
+objects by calling its **seal()** or **freeze()** methods, respectively.
 
 The **mixin()** method defines properties to be added directly to a created object 
 (meaning they won't be shared between separate objects created by the factory):
@@ -44,11 +47,11 @@ The **mixin()** method defines properties to be added directly to a created obje
   => "hello"
 ```  
 
-The **shared()** method defines properties to be added to the prototype of created objects 
+The **share()** method defines properties to be added to the prototype of created objects 
 (meaning they **will** be shared among all objects created by the factory). This is generally more useful
 for defining methods:
 ```JavaScript
-  var factory = oFactory().shared({
+  var factory = oFactory().share({
     getNum: function() { return 5; }
   });
   var obj = factory();
@@ -72,20 +75,29 @@ shared properties are defined beforehand:
   => "good bye"
 ```  
 
-Both methods can also take as sole argument a function in which the appropriate object (either the created object
-or the prototype) will be bound to **this**. This can be useful for creating closures to hide private data:
+Both methods can also take as sole argument a function to which the appropriate object (either the created object
+or the prototype) will be passed as the sole argument. This can be useful for creating closures to hide private data:
 ```JavaScript
-  var factory = oFactory().mixin(function() {
+  var factory = oFactory().share(function(proto) {
     var x = "x";
     
-    this.getX = function() {
+    self.getX = function() {
       return x;
     };
+  }).mixin(function(self) {
+    var y = "y";
+    
+    self.getY = function() {
+      return y;
+    };
   });
+  
   var obj = factory();
   
   obj.getX();
   => "x"
+  obj.getY();
+  => "y"
 ```
 
 Properties defined when a factory is created are essentially defaults that can
@@ -99,12 +111,12 @@ simply pass an object with properties to be added or overridden in the new objec
   => "b"
 ```
 
-The second is to pass a function that will have **this** bound to the created object:
+The second is to pass a function to which the created object will be passed as sole argument:
 ```JavaScript
   var factory = oFactory().mixin({ a: "a" });
-  var obj = factory(function() {
-    this.a = "world";
-    this.b = "hello, " + this.a;
+  var obj = factory(function(self) {
+    self.a = "world";
+    self.b = "hello, " + this.a;
   });
   
   obj.a;
@@ -115,10 +127,10 @@ The second is to pass a function that will have **this** bound to the created ob
 
 The **init()** method can be used when further initialization is required after all of the created object's 
 properties have been set (including those set during the actual call to the factory function). Its sole 
-argument is a function in which **this** is bound to the created object:
+argument is a function to which the created object is passed as sole argument:
 ```JavaScript
-  var factory = oFactory().init(function() {
-    this.sum = this.x + this.y;
+  var factory = oFactory().init(function(self) {
+    self.sum = self.x + self.y;
   });
   var obj = factory({
     x: 4,
@@ -129,21 +141,37 @@ argument is a function in which **this** is bound to the created object:
   => 7
 ```
 
+The methods **seal()** and **freeze()** take no arguments and simply direct the factory to seal or freeze, respectively,
+the objects it creates: 
+```JavaScript
+  var factory = oFactory().seal();
+  var obj = factory();
+  
+  Object.isSealed(obj);
+  => true
+  
+  var factory = oFactory().freeze();
+  var obj = factory();
+  
+  Object.isFrozen(obj);
+  => true
+```
+
 Factory definition methods can be chained together as a shorthand to create more complex factories:
 ```JavaScript
   var factory = oFactory({
     getX: function() { return this.x; }
-  }).mixin(function() {
+  }).mixin(function(self) {
     var y = 7;
     
-    this.getY = function() {
+    self.getY = function() {
       return y;
     };
-  }).init(function() {
-    this.sum = this.getX() + this.getY();
-  }).shared({
+  }).init(function(self) {
+    self.sum = self.getX() + self.getY();
+  }).share({
     getSum: function() { return this.sum; }
-  });
+  }).freeze();
   var obj = factory({ x: 5 });
   
   obj.a;
@@ -156,13 +184,55 @@ Factory definition methods can be chained together as a shorthand to create more
   => 12
   obj.getSum();
   => 12
+  Object.isFrozen(obj);
+  => true
 ```
+
+When a function is passed as argument to a property definition method or a factory function call, 
+**this** is bound to the appropriate object, either the created object or the prototype, 
+as another way to refer to it. So the following two factories and factory function
+calls are equivalent: 
+```JavaScript
+  var factory1 = oFactory().share(function(proto) {
+    proto.getX = function() { return 5 ; }
+  }).mixin(function(self) {
+    var y = 7;
+    
+    self.getY = function() {
+      return y;
+    };
+  }).init(function(self) {
+    self.sum = self.getX() + self.getY();
+  });
+  var o1 = factory1(function(self) {
+    self.x = 5;
+  });
+  
+  var factory1 = oFactory().share(function() {
+    this.getX = function() { return 5 ; }
+  }).mixin(function(self) {
+    var y = 7;
+    
+    this.getY = function() {
+      return y;
+    };
+  }).init(function(self) {
+    this.sum = this.getX() + this.getY();
+  });
+  var o2 = factory2(function() {
+    this.x = 5;
+  });
+```
+Choosing between the two formats is simply a matter of style, but note that in the latter format, 
+the meaning of *this* is different in the **.share()** callback (where it refers to the prototype) and
+the **.init()**, **.mixin()** and factory function callbacks (where it refers to the created object).
+
 
 Finally, factories can be composed using **oFactory.compose()** with any number of 
 factories as arguments:
 ```JavaScript
   var f1 = oFactory().mixin({ a: "a" });
-  var f2 = oFactory().shared({ getA: function() { return this.a; } });
+  var f2 = oFactory().share({ getA: function() { return this.a; } });
   
   var comp = oFactory.compose(f1, f2);
   var obj = comp();
@@ -176,7 +246,7 @@ factories as arguments:
 There is also an instance method version of composition:
 ```JavaScript
   var f1 = oFactory().mixin({ a: "a" });
-  var f2 = oFactory().shared({ getA: function() { return this.a; } });
+  var f2 = oFactory().share({ getA: function() { return this.a; } });
   
   var comp = f1.compose(f2);
 ```

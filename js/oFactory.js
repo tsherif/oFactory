@@ -23,15 +23,16 @@
 
 var oFactory = (function() {
 
-  var objectExtend = function(obj, extension) {    
+  var objectExtend = function(obj, extension, shallow) {
+    
     Object.getOwnPropertyNames(extension).forEach(function(key) {
-      obj[key] = copyValue(extension[key]);
+      obj[key] = shallow ? extension[key] : copyValue(extension[key]);
     });
   };
   
   var moduleExtend = function(obj, extensions) {
     extensions.forEach(function (extension) {
-      extension.call(obj);
+      extension.call(obj, obj);
     });
   };
   
@@ -65,7 +66,10 @@ var oFactory = (function() {
     return result;
   };
 
-  var oFactory = function(proto) {    
+  var oFactory = function(proto) {
+    var sealed = false;
+    var frozen = false;
+  
     var factory = function(props) {
       var obj;
       var specs = factory.specs;
@@ -76,12 +80,15 @@ var oFactory = (function() {
       objectExtend(obj, specs.instance_properties);
       moduleExtend(obj, specs.instance_modules);
       if (typeof props === "function") {
-        props.call(obj);
+        props.call(obj, obj);
       } else {
-        objectExtend(obj, props);
+        objectExtend(obj, props, false);
       }    
       
       moduleExtend(obj, specs.inits);
+      
+      if (sealed) Object.seal(obj);
+      if (frozen) Object.freeze(obj);
       
       return obj;
     };
@@ -99,13 +106,7 @@ var oFactory = (function() {
       return this;
     };
     
-    factory.init = function(f) {
-      this.specs.inits.push(f);
-      
-      return this;
-    };
-    
-    factory.shared = function() {
+    factory.share = function() {
       var extensions = Array.prototype.slice.call(arguments);
       var i, count;
       var mods = [];
@@ -123,6 +124,24 @@ var oFactory = (function() {
       
       return this;
     };
+    
+    factory.init = function(f) {
+      this.specs.inits.push(f);
+      
+      return this;
+    };
+    
+    factory.freeze = function() {
+      frozen = true;
+      
+      return this;
+    }
+   
+    factory.seal = function() {
+      sealed = true;
+      
+      return this;
+    }
     
     factory.compose = function() {
       var factories = [this].concat(Array.prototype.slice.call(arguments));
