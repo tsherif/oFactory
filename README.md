@@ -117,7 +117,7 @@ The second is to pass a function to which the created object will be passed as s
   var factory = oFactory().mixin({ a: "a" });
   var obj = factory(function(self) {
     self.a = "world";
-    self.b = "hello, " + this.a;
+    self.b = "hello, " + self.a;
   });
   
   obj.a;
@@ -225,7 +225,7 @@ calls are equivalent:
   });
 ```
 Choosing between the two formats is simply a matter of style, but note that in the latter format, 
-the meaning of *this* is different in the **.share()** callback (where it refers to the prototype) and
+the meaning of **this** is different in the **.share()** callback (where it refers to the prototype) and
 the **.init()**, **.mixin()** and factory function callbacks (where it refers to the created object).
 
 
