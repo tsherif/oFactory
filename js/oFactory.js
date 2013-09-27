@@ -55,7 +55,7 @@ var oFactory = (function() {
         result.push(copyValue(elem));
       });
     } else if (typeof val === "object") {
-      result = {};
+      result = Object.create(Object.getPrototypeOf(val));
       Object.keys(val).forEach(function(key) {
         result[key] = copyValue(val[key]);
       });
@@ -82,7 +82,7 @@ var oFactory = (function() {
       if (typeof props === "function") {
         props.call(obj, obj);
       } else {
-        objectExtend(obj, props, false);
+        objectExtend(obj, props, true);
       }    
       
       moduleExtend(obj, specs.inits);
