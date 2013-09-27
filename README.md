@@ -77,28 +77,25 @@ shared properties are defined beforehand:
 ```  
 
 Both methods can also take as sole argument a function to which the appropriate object (either the created object
-or the prototype) will be passed as the sole argument. This can be useful for creating closures to hide private data:
+or the prototype) will be passed as the sole argument. This is useful for creating closures to hide private data or
+when property values need to be computed at creation time:
 ```JavaScript
   var factory = oFactory().share(function(proto) {
     var x = "x";
     
-    self.getX = function() {
+    proto.getX = function() {
       return x;
     };
   }).mixin(function(self) {
-    var y = "y";
-    
-    self.getY = function() {
-      return y;
-    };
+    self.created_at = Date.now();
   });
   
   var obj = factory();
   
   obj.getX();
   => "x"
-  obj.getY();
-  => "y"
+  obj.created_at;
+  => 1380279181489
 ```
 
 Properties defined when a factory is created are essentially defaults that can
