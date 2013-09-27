@@ -170,7 +170,7 @@ Factory definition methods can be chained together as a shorthand to create more
   }).freeze();
   var obj = factory({ x: 5 });
   
-  obj.a;
+  obj.x;
   => 5
   obj.getX();
   => 5
@@ -204,15 +204,15 @@ calls are equivalent:
     self.x = 5;
   });
   
-  var factory1 = oFactory().share(function() {
+  var factory2 = oFactory().share(function() {
     this.getX = function() { return 5 ; }
-  }).mixin(function(self) {
+  }).mixin(function() {
     var y = 7;
     
     this.getY = function() {
       return y;
     };
-  }).init(function(self) {
+  }).init(function() {
     this.sum = this.getX() + this.getY();
   });
   var obj2 = factory2(function() {
@@ -237,6 +237,21 @@ factories as arguments:
   => "a"
   obj.getA();
   => "a"
+```
+
+Note that the effects of **seal()** and **freeze()** are not passed to a composed factory
+by its components. To freeze or seal a composed factory, simply call the appropriate method
+after its creation:
+
+```JavaScript
+  var f1 = oFactory().mixin({ a: "a" });
+  var f2 = oFactory().share({ getA: function() { return this.a; } });
+  
+  var comp = oFactory.compose(f1, f2).seal();
+  var obj = comp();
+  
+  Object.isSealed(obj);
+  => true
 ```
 
 There is also an instance method version of composition:
