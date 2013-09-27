@@ -100,6 +100,17 @@ test("Passing object argument to factory function", function() {
   deepEqual(obj.b, "c", "Property created");
 });
 
+test("Passing function argument to factory function", function() {
+  var factory = oFactory().mixin({ a: "a" });
+  var obj = factory(function(self) { 
+    self.a = "b"; 
+    self.b = "c";
+  });
+  
+  deepEqual(obj.a, "b", "Property overriden");
+  deepEqual(obj.b, "c", "Property created");
+});
+
 test("Chaining", function() {
   var factory = oFactory({
     getX: function() { return this.x; }
