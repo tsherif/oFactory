@@ -60,23 +60,7 @@ for defining methods:
   obj.getNum(); 
   => 5
 ```  
-
-Both methods can take several objects as arguments and will apply them in the order they are given
-(i.e. objects later in the argument list will be given priority). This can be useful if mixins or 
-shared properties are defined beforehand:
-```JavaScript
-  var hello_mixin = { hello: "hello" };
-  var goodbye_mixin = { goodbye: "good bye" };
-  var factory = oFactory().mixin(hello_mixin, goodbye_mixin);
-  var obj = factory();
-  
-  obj.hello; 
-  => "hello"
-  obj.goodbye
-  => "good bye"
-```  
-
-Both methods can also take as sole argument a function to which the appropriate object (either the created object
+Both methods can also take as argument a function to which the appropriate object (either the created object
 or the prototype) will be passed as the sole argument. This is useful for creating closures to hide private data or
 when property values need to be computed at creation time:
 ```JavaScript
@@ -89,7 +73,6 @@ when property values need to be computed at creation time:
   }).mixin(function(self) {
     self.created_at = Date.now();
   });
-  
   var obj = factory();
   
   obj.getX();
@@ -97,6 +80,21 @@ when property values need to be computed at creation time:
   obj.created_at;
   => 1380279181489
 ```
+
+Both methods can take several objects or functions as arguments and will apply them in the order they are given
+(i.e. arguments given later will have priority). This can be useful if mixins or 
+shared properties are defined beforehand:
+```JavaScript
+  var hello_mixin = { hello: "hello" };
+  var goodbye_mixin = function(self) { self.goodbye = "good bye"; };
+  var factory = oFactory().mixin(hello_mixin, goodbye_mixin);
+  var obj = factory();
+  
+  obj.hello; 
+  => "hello"
+  obj.goodbye
+  => "good bye"
+```  
 
 Properties defined when a factory is created are essentially defaults that can
 be overridden in two ways when the factory is actually used. The first is to 
@@ -202,7 +200,7 @@ calls are equivalent:
   }).init(function(self) {
     self.sum = self.getX() + self.getY();
   });
-  var o1 = factory1(function(self) {
+  var obj1 = factory1(function(self) {
     self.x = 5;
   });
   
@@ -217,7 +215,7 @@ calls are equivalent:
   }).init(function(self) {
     this.sum = this.getX() + this.getY();
   });
-  var o2 = factory2(function() {
+  var obj2 = factory2(function() {
     this.x = 5;
   });
 ```
