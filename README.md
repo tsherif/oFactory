@@ -225,8 +225,8 @@ calls are equivalent:
   });
 ```
 Choosing between the two formats is simply a matter of style, but note that in the latter format, 
-the meaning of **this** is different in the **.share()** callback (where it refers to the prototype) and
-the **.init()**, **.mixin()** and factory function callbacks (where it refers to the created object).
+the meaning of **this** is different in the **share()** callback (where it refers to the prototype) and
+the **init()**, **mixin()** and factory function callbacks (where it refers to the created object).
 
 
 Finally, factories can be composed using **oFactory.compose()** with any number of 
