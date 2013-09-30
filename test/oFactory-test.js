@@ -36,6 +36,17 @@ test("mixin() with multiple arguments", function() {
   deepEqual(obj.goodbye, "good bye", "Function modifies object");
 });
 
+test("mixin() makes deep copies of object arguments", function() {
+  var obj_arg = { a: {b: "c"} };
+
+  var factory = oFactory().mixin(obj_arg);
+  var obj = factory();
+  obj.a === obj_arg.a;
+  
+  notStrictEqual(obj.a, obj_arg.a, "Values not identical.");
+  deepEqual(obj.a, obj_arg.a, "Values copied.");
+});
+
 test("share() with object argument", function() {
   var factory = oFactory().share({ hello: "hello" });
   var obj = factory();
@@ -64,6 +75,16 @@ test("share() with multiple arguments", function() {
   deepEqual(obj.hello, "hello", "Function modifies prototype");
   ok(Object.getPrototypeOf(obj).hasOwnProperty("goodbye"), "Property defined on prototype");
   deepEqual(obj.goodbye, "good bye", "Function modifies prototype");
+});
+
+test("share() makes shallow copies of object arguments", function() {
+  var obj_arg = { a: {b: "c"} };
+
+  var factory = oFactory().share(obj_arg);
+  var obj = factory();
+  obj.a === obj_arg.a;
+  
+  strictEqual(obj.a, obj_arg.a, "Values identical.");
 });
 
 test("init()", function() {
@@ -109,6 +130,16 @@ test("Passing function argument to factory function", function() {
   
   deepEqual(obj.a, "b", "Property overriden");
   deepEqual(obj.b, "c", "Property created");
+});
+
+test("Factory function makes shallow copies of object arguments", function() {
+  var obj_arg = { a: {b: "c"} };
+
+  var factory = oFactory();
+  var obj = factory(obj_arg);
+  obj.a === obj_arg.a;
+  
+  strictEqual(obj.a, obj_arg.a, "Values identical.");
 });
 
 test("Chaining", function() {

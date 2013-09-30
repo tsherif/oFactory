@@ -121,6 +121,32 @@ The second is to pass a function to which the created object will be passed as s
   => "hello, world"
 ```
 
+Note that there is a slight difference in the behaviour of object arguments passed to **.mixin()** versus
+those passed to **.share()** or a factory function. Object arguments passed to **.share()** or
+a factory function will have the values of their properties copied copied directly into the
+appropriate object (prototype or created object). On the other hand, since the values in objects passed
+to **.mixin()** will potentially be used in many objects, the values in created objects will be deep
+copies of the originals to avoid shared state:
+```JavaScript
+  var obj_arg = { a: {b: "c"} };
+
+  var factory1 = oFactory().mixin(obj_arg);
+  var obj1 = factory1();
+  obj1.a === obj_arg.a;
+  => false
+  
+  var factory2 = oFactory().share(obj_arg);
+  var obj2 = factory2();
+  obj2.a === obj_arg.a;
+  => true
+  
+  var factory3 = oFactory();
+  var obj3 = factory3(obj_arg);
+  obj3.a === obj_arg.a;
+  => true
+```
+
+
 The **init()** method can be used when further initialization is required after all of the created object's 
 properties have been set (including those set during the actual call to the factory function). Its sole 
 argument is a function to which the created object is passed as sole argument:

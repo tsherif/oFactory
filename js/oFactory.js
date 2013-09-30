@@ -35,7 +35,7 @@ var oFactory = (function() {
   var objectExtend = function(obj, extension, shallow) {
     
     Object.getOwnPropertyNames(extension).forEach(function(key) {
-      obj[key] = shallow ? extension[key] : copyValue(extension[key]);
+      obj[key] = shallow ? extension[key] : deepCopy(extension[key]);
     });
   };
   
@@ -61,18 +61,18 @@ var oFactory = (function() {
   };
   
   // Perform a deep copy of a value.
-  var copyValue = function copyValue(val) {
+  var deepCopy = function deepCopy(val) {
     var result;
     
     if (Array.isArray(val)) {
       result = [];
       val.forEach(function(elem) {
-        result.push(copyValue(elem));
+        result.push(deepCopy(elem));
       });
     } else if (typeof val === "object") {
       result = Object.create(Object.getPrototypeOf(val));
       Object.keys(val).forEach(function(key) {
-        result[key] = copyValue(val[key]);
+        result[key] = deepCopy(val[key]);
       });
     } else {
       result = val;
@@ -152,7 +152,7 @@ var oFactory = (function() {
         if (typeof extension === "function") {
           mods.push(extension);
         } else if (typeof extension === "object"){
-          objectExtend(specs.proto, extension);
+          objectExtend(specs.proto, extension, true);
         }
       });
       
