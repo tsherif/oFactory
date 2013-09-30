@@ -123,7 +123,7 @@ The second is to pass a function to which the created object will be passed as s
 
 Note that there is a slight difference in the behaviour of object arguments passed to **.mixin()** versus
 those passed to **.share()** or a factory function. Object arguments passed to **.share()** or
-a factory function will have the values of their properties copied directly into the
+a factory function will have the references to their values copied directly into the
 appropriate object (prototype or created object). On the other hand, the values in objects passed
 to **.mixin()** will potentially be used in many objects, so to avoid shared state, the values in 
 created objects will be deep copies of the originals:
