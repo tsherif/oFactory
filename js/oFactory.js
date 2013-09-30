@@ -69,7 +69,7 @@ var oFactory = (function() {
       val.forEach(function(elem) {
         result.push(deepCopy(elem));
       });
-    } else if (typeof val === "object") {
+    } else if (val && typeof val === "object") {
       result = Object.create(Object.getPrototypeOf(val));
       Object.keys(val).forEach(function(key) {
         result[key] = deepCopy(val[key]);
