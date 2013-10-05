@@ -41,7 +41,6 @@ test("mixin() makes deep copies of object arguments", function() {
 
   var factory = oFactory().mixin(obj_arg);
   var obj = factory();
-  obj.a === obj_arg.a;
   
   notStrictEqual(obj.a, obj_arg.a, "Values not identical.");
   deepEqual(obj.a, obj_arg.a, "Values copied.");
@@ -82,7 +81,6 @@ test("share() makes shallow copies of object arguments", function() {
 
   var factory = oFactory().share(obj_arg);
   var obj = factory();
-  obj.a === obj_arg.a;
   
   strictEqual(obj.a, obj_arg.a, "Values identical.");
 });
@@ -137,7 +135,6 @@ test("Factory function makes shallow copies of object arguments", function() {
 
   var factory = oFactory();
   var obj = factory(obj_arg);
-  obj.a === obj_arg.a;
   
   strictEqual(obj.a, obj_arg.a, "Values identical.");
 });
@@ -173,7 +170,7 @@ test("Chaining", function() {
 
 test("Using 'this' with function arguments", function() {
   var factory = oFactory().share(function() {
-    this.getX = function() { return 5 ; }
+    this.getX = function() { return 5 ; };
   }).mixin(function() {
     var y = 7;
     
