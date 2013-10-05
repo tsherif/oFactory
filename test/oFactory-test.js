@@ -46,6 +46,13 @@ test("mixin() makes deep copies of object arguments", function() {
   deepEqual(obj.a, obj_arg.a, "Values copied.");
 });
 
+test("mixin() can handle null values in object argument", function() {
+  var factory = oFactory().mixin({ hello: null });
+  var obj = factory();
+  
+  strictEqual(obj.hello, null, "Properties assigned to object");
+});
+
 test("share() with object argument", function() {
   var factory = oFactory().share({ hello: "hello" });
   var obj = factory();
