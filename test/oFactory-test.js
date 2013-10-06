@@ -192,7 +192,6 @@
     }).share({
       getSum: function() { return this.sum; }
     }).freeze();
-    var obj = factory();
     var clone_factory = factory.clone();
     var clone = clone_factory({ x: 5 });
     
@@ -226,7 +225,6 @@
     }).share({
       getSum: function() { return this.sum; }
     }).freeze();
-    var obj = factory();
     var child_factory = factory.beget();
     var child = child_factory({ x: 5 });
     

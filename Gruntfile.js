@@ -18,10 +18,10 @@ module.exports = function(grunt) {
       files: ["test/*.html"]
     },
     jshint: {
-      // Defaults.
       options: {
         eqeqeq: true,
         undef: true,
+        unused: true,
         strict: true,
         indent: 2,
         immed: true,

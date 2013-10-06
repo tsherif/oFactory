@@ -21,7 +21,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////
 
-var oFactory = (function() {
+(function(global) {
   "use strict";
   
   ///////////////////////////////////
@@ -96,7 +96,7 @@ var oFactory = (function() {
   //  oFactory Function
   ///////////////////////////////////
   
-  var oFactory = function(proto) {
+  var oFactory = global.oFactory = function(proto) {
   
     // The created factory function
     //
@@ -241,5 +241,5 @@ var oFactory = (function() {
   };
   
   return oFactory;
-})();
+})(this);
 
