@@ -3,8 +3,10 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
+    licence: grunt.file.read("LICENSE"),
     uglify: {
       options: {
+        banner: "/*\n<%= pkg.name %> v<%= pkg.version %> \n\n<%= licence %>*/\n",
         preserveComments: "some"
       },
       build: {
