@@ -240,6 +240,5 @@
     return comp;
   };
   
-  return oFactory;
 })(this);
 
