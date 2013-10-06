@@ -8,6 +8,10 @@ Concepts and API heavily inspired by Eric Elliot's [stampit](https://github.com/
 Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. This
 library is thoroughly **untested**. Use at your own risk!
 
+
+Defining Factories
+------------------
+
 oFactory uses two basic concepts for object creation: **mixin** properties and **shared** properties. **mixin** properties
 are added directly to a created object, while **shared** properties are added to the prototype of all objects created
 by a given factory.
@@ -249,6 +253,50 @@ Choosing between the two formats is simply a matter of style, but note that in t
 the meaning of **this** is different in the **share()** callback (where it refers to the prototype) and
 the **init()**, **mixin()** and factory function callbacks (where it refers to the created object).
 
+
+Reusing Factories
+-----------------
+
+oFactory also defines methods that allow factories to be used to created other factories.
+
+The **clone()** method creates a new factory that creates objects that will behave identically
+to those created by the original factory, but without any other underlying relationship:
+```JavaScript
+  var factory = oFactory({ getA: function() { return "a"; } });;
+  var clone_factory = factory.clone();
+  
+  var obj = factory();
+  var clone_obj = clone_factory();
+  
+  obj.getA();
+  => "a"
+  clone_obj.getA();
+  => "a"
+  Object.getPrototypeOf(obj) === Object.getPrototypeOf(clone_obj);
+  => false
+  Object.getPrototypeOf(obj).isPrototypeOf(Object.getPrototypeOf(clone_obj));
+  => false
+```
+
+Similarly, factories produced by the **beget()** method create objects that will behave identically
+to those created by the original factory. In the case of **beget()**, however, objects created by 
+the new factory will have a prototype that inherits from the prototype used by the original factory:
+```JavaScript
+  var factory = oFactory({ getA: function() { return "a"; } });;
+  var child_factory = factory.beget();
+  
+  var obj = factory();
+  var child_obj = child_factory();
+  
+  obj.getA();
+  => "a"
+  child_obj.getA();
+  => "a"
+  Object.getPrototypeOf(obj) === Object.getPrototypeOf(child_obj);
+  => false
+  Object.getPrototypeOf(obj).isPrototypeOf(Object.getPrototypeOf(child_obj));
+  => true
+```
 
 Finally, factories can be composed using **oFactory.compose()** with any number of 
 factories as arguments:
