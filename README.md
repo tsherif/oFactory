@@ -5,8 +5,9 @@ A simple, experimental JavaScript library for creating factories.
 
 Concepts and API heavily inspired by Eric Elliot's [stampit](https://github.com/dilvie/stampit) library. 
 
-Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. This
-library is thoroughly **untested**. Use at your own risk!
+Essentially this is just an attempt to implement similar functionality using a simpler API and conceptual model. 
+Development is in the early stages, and though oFactory is being used in production settings, there may still be
+unresolved issues. Use at your own risk!
 
 
 Defining Factories
